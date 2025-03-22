@@ -22,7 +22,8 @@ Video Video_Init(void) {
 	}
 
 	ret.renderer = SDL_CreateRenderer(
-		ret.window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+		ret.window, -1, //SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC
+		SDL_RENDERER_SOFTWARE | SDL_RENDERER_PRESENTVSYNC
 	);
 
 	if (ret.renderer == NULL) {
@@ -52,13 +53,13 @@ void Video_OpenFont(Video* video, char* path, int charWidth, int charHeight) {
 		FATAL("Failed to open font");
 	}
 
-	SDL_Texture* texture = SDL_CreateTextureFromSurface(video->renderer, surface);
+	video->font = SDL_CreateTextureFromSurface(video->renderer, surface);
 
-	if (texture == NULL) {
+	if (video->font == NULL) {
 		FATAL("Failed to create texture");
 	}
 
-	SDL_FreeSurface(surface);
+	// SDL_FreeSurface(surface);
 
 	SDL_SetWindowMinimumSize(
 		video->window, 21 * video->charWidth, 3 * video->charHeight
@@ -84,6 +85,8 @@ void Video_DrawCharacter(Video* video, int x, int y, uchar ch, SDL_Colour colour
 		(((int) ch) / (fontW / video->charHeight)) * video->charHeight,
 		video->charWidth, video->charHeight
 	};
+	printf("Rendering from %d, %d\n", src.x, src.y);
+	printf("Font is %dx%d\n", video->charWidth, video->charHeight);
 	SDL_Rect dest = {
 		x, y, video->charWidth, video->charHeight
 	};
