@@ -16,7 +16,7 @@ void App_Init(App* app, char** env) {
 	// init video
 	app->video = Video_Init();
 	SDL_StartTextInput();
-	Video_OpenFont(&app->video, "./font.ttf");
+	Video_OpenFont(&app->video, "./font.bmp", 8, 8);
 
 	// init tabs
 	app->tabs       = NULL;

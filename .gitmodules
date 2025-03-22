@@ -1,3 +1,6 @@
 [submodule "lib/noch"]
 	path = lib/noch
 	url = https://github.com/lordoftrident/noch
+[submodule "lib/stb"]
+	path = lib/stb
+	url = https://github.com/nothings/stb

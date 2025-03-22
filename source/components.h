@@ -18,7 +18,6 @@
 #include <sys/ioctl.h>
 #include <sys/select.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
 #include <noch/json.h>
 #include <noch/args.h>
 

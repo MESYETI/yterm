@@ -29,90 +29,43 @@ Video Video_Init(void) {
 		FATAL("Failed to create renderer");
 	}
 
-	// initialise SDL2_TTF
-	if (TTF_Init() < 0) {
-		FATAL("Failed to initialise SDL2_TTF");
-	}
-
 	ret.font = NULL;
-	memset(ret.characters, 0, sizeof(ret.characters));
-
 	return ret;
 }
 
 void Video_FreeFont(Video* video) {
-	TTF_CloseFont(video->font);
-
-	for (uint32_t i = 0; i < ARRAY_LEN(video->characters); ++ i) {
-		if (video->characters[i] == NULL) {
-			continue;
-		}
-		
-		SDL_DestroyTexture(video->characters[i]);
-		video->characters[i] = NULL;
-	}
+	SDL_DestroyTexture(video->font);
 }
 
 void Video_Free(Video* video) {
 	Video_FreeFont(video);
-	TTF_Quit();
 	
 	SDL_DestroyWindow(video->window);
 	SDL_DestroyRenderer(video->renderer);
 	SDL_Quit();
 }
 
-void Video_OpenFont(Video* video, char* path) {
-	video->font = TTF_OpenFont(path, 16);
+void Video_OpenFont(Video* video, char* path, int charWidth, int charHeight) {
+	SDL_Surface* surface = SDL_LoadBMP(path);
 
-	if (video->font == NULL) {
-		FATAL("Failed to open font"); // TODO: make a window for this and reset
+	if (surface == NULL) {
+		FATAL("Failed to open font");
 	}
 
-	int created = 0;
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(video->renderer, surface);
 
-	// generate characters
-	for (uint32_t i = 1; i < ARRAY_LEN(video->characters); ++ i) {
-		if (i == 173) {
-			continue; // idk
-		}
-
-		SDL_Color colour      = {255, 255, 255, 255};
-		char      asString[2] = {(char) i, 0};
-
-		SDL_Surface* textSurface = TTF_RenderText_Blended(
-			video->font, asString, colour
-		);
-
-		if (textSurface == NULL) {
-			fprintf(stderr, "TTF error for character %d: %s\n", i, TTF_GetError());
-			//FATAL("Failed to render text");
-			continue;
-		}
-
-		video->characters[i] = SDL_CreateTextureFromSurface(
-			video->renderer, textSurface
-		);
-
-		if (video->characters[i] == NULL) {
-			fprintf(stderr, "SDL error: %s\n", SDL_GetError());
-			//FATAL("Failed to create texture");
-			continue;
-		}
-
-		SDL_FreeSurface(textSurface);
-
-		++ created;
+	if (texture == NULL) {
+		FATAL("Failed to create texture");
 	}
 
-	printf("Rendered %d characters\n", created);
-
-	const char* str = "M";
-	TTF_SizeText(video->font, str, &video->charWidth, &video->charHeight);
+	SDL_FreeSurface(surface);
 
 	SDL_SetWindowMinimumSize(
 		video->window, 21 * video->charWidth, 3 * video->charHeight
 	);
+
+	video->charWidth  = charWidth;
+	video->charHeight = charHeight;
 }
 
 void Video_DrawCharacter(Video* video, int x, int y, uchar ch, SDL_Colour colour) {
@@ -120,23 +73,20 @@ void Video_DrawCharacter(Video* video, int x, int y, uchar ch, SDL_Colour colour
 		return;
 	}
 
-	SDL_Texture* texture = video->characters[ch];
+	int fontW;
+	int fontH;
+	SDL_QueryTexture(video->font, NULL, NULL, &fontW, &fontH); // TODO: is this slow?
 
-	if (texture == NULL) {
-		texture = video->characters['?'];
+	//SDL_SetTextureColorMod(video->font, colour.r, colour.g, colour.b);
 
-		if (texture == NULL) {
-			return;
-		}
-	}
+	SDL_Rect src = {
+		(((int) ch) % (fontW / video->charWidth)) * video->charWidth,
+		(((int) ch) / (fontW / video->charHeight)) * video->charHeight,
+		video->charWidth, video->charHeight
+	};
+	SDL_Rect dest = {
+		x, y, video->charWidth, video->charHeight
+	};
 
-	SDL_SetTextureColorMod(texture, colour.r, colour.g, colour.b);
-
-	SDL_Rect textRect;
-	textRect.x = x;
-	textRect.y = y;
-
-	SDL_QueryTexture(texture, NULL, NULL, &textRect.w, &textRect.h);
-
-	SDL_RenderCopy(video->renderer, texture, NULL, &textRect);
+	SDL_RenderCopy(video->renderer, video->font, &src, &dest);
 }
