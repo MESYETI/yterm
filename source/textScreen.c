@@ -90,7 +90,7 @@ void TextScreen_PutCharacter(TextScreen* text, char ch) {
 			break;
 		}
 		case '\t': {
-			text->cursor.x += 4;
+			text->cursor.x += 4 - text->cursor.x % 4;
 			break;
 		}
 		case 0x07: { // bell
