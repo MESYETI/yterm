@@ -67,8 +67,8 @@ static void RunCommand(Terminal* terminal, char cmd, int* args, size_t argsCount
 				break;
 			}
 
-			terminal->buffer.cursor.x = args[1];
-			terminal->buffer.cursor.y = args[0];
+			terminal->buffer.cursor.x = args[1] - 1;
+			terminal->buffer.cursor.y = args[0] - 1;
 			break;
 		}
 		case 'A': { // move cursor up
@@ -247,6 +247,7 @@ void HandleEscape(Terminal* terminal) {
 
 		if (isdigit(in)) { // command
 			// TODO: maybe i should make this not a static array
+			// TODO: lol this is an exploit
 			int    args[256];
 			size_t argsCount = 0;
 
@@ -270,6 +271,9 @@ void HandleEscape(Terminal* terminal) {
 					if (in != ';') {
 						readingArgs = false;
 						RunCommand(terminal, in, args, argsCount);
+					}
+					else {
+						NEXT_BYTE();
 					}
 				}
 			}
