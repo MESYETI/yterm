@@ -15,17 +15,16 @@ void App_Init(App* app, char** env) {
 
 	// init video
 	app->video = Video_Init();
-	SDL_StartTextInput();
-	Video_OpenFont(&app->video, "./font.ttf");
+	SDL_StartTextInput(app->video.window);
+
+	// init colourscheme and font
+	LoadConfig(&app->colours, &app->video);
 
 	// init tabs
 	app->tabs       = NULL;
 	app->tabAmount  = 0;
 	app->currentTab = 0;
 	App_AddTab(app);
-
-	// init colourscheme
-	LoadConfig(&app->colours);
 
 	// init screen
 	app->screen = TextScreen_New(
@@ -87,28 +86,28 @@ void App_Update(App* app) {
 	
 	while (SDL_PollEvent(&e)) {
 		switch (e.type) {
-			case SDL_QUIT: {
+			case SDL_EVENT_QUIT: {
 				app->running = false;
 				continue;
 			}
-			case SDL_KEYDOWN:
-			case SDL_TEXTINPUT: {
-				if (e.type == SDL_KEYDOWN) {
-					const uint8_t* keys = SDL_GetKeyboardState(NULL);
+			case SDL_EVENT_KEY_DOWN:
+			case SDL_EVENT_TEXT_INPUT: {
+				if (e.type == SDL_EVENT_KEY_DOWN) {
+					const bool* keys = SDL_GetKeyboardState(NULL);
 
 					if (!ShiftPressed(keys) || !keys[SDL_SCANCODE_LCTRL]) {
 						goto doInput;
 					}
 
 					if (
-						(e.key.keysym.scancode == SDL_SCANCODE_LCTRL) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_LSHIFT) ||
-						(e.key.keysym.scancode == SDL_SCANCODE_RSHIFT)
+						(e.key.scancode == SDL_SCANCODE_LCTRL) ||
+						(e.key.scancode == SDL_SCANCODE_LSHIFT) ||
+						(e.key.scancode == SDL_SCANCODE_RSHIFT)
 					) {
 						goto doInput;
 					}
 
-					switch (e.key.keysym.scancode) {
+					switch (e.key.scancode) {
 						case SDL_SCANCODE_T: {
 							App_AddTab(app);
 							app->currentTab = app->tabAmount - 1;
@@ -141,28 +140,24 @@ void App_Update(App* app) {
 				HandleInputEvent(&e, App_CurrentTab(app));
 				break;
 			}
-			case SDL_WINDOWEVENT: {
-				switch (e.window.event) {
-					case SDL_WINDOWEVENT_RESIZED: {
-						app->video.windowSize.x = e.window.data1;
-						app->video.windowSize.y = e.window.data2;
-					
-						Vec2 newSize = {
-							e.window.data1 / app->video.charWidth,
-							e.window.data2 / app->video.charHeight
-						};
-						TextScreen_Resize(&app->screen, newSize);
+			case SDL_EVENT_WINDOW_RESIZED: {
+				app->video.windowSize.x = e.window.data1;
+				app->video.windowSize.y = e.window.data2;
+			
+				Vec2 newSize = {
+					e.window.data1 / app->video.charWidth,
+					e.window.data2 / app->video.charHeight
+				};
+				TextScreen_Resize(&app->screen, newSize);
 
-						Vec2 newTabSize = App_GetUsableArea(app);
-						
-						for (size_t i = 0; i < app->tabAmount; ++ i) {
-							TextScreen_Resize(&app->tabs[i].buffer, newTabSize);
-						}
-						
-						SetTerminalSize(App_CurrentTab(app));
-						break;
-					}
+				Vec2 newTabSize = App_GetUsableArea(app);
+				
+				for (size_t i = 0; i < app->tabAmount; ++ i) {
+					TextScreen_Resize(&app->tabs[i].buffer, newTabSize);
 				}
+				
+				SetTerminalSize(App_CurrentTab(app));
+				break;
 			}
 		}
 	}

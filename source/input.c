@@ -1,12 +1,12 @@
 #include "util.h"
 #include "input.h"
 
-bool ShiftPressed(const uint8_t* keys) {
+bool ShiftPressed(const bool* keys) {
 	return (keys[SDL_SCANCODE_LSHIFT] || keys[SDL_SCANCODE_RSHIFT])? true : false;
 }
 
 static char* KeyToSequence(SDL_Scancode key) {
-	const uint8_t* keys = SDL_GetKeyboardState(NULL);
+	const bool* keys = SDL_GetKeyboardState(NULL);
 
 	if (keys[SDL_SCANCODE_LCTRL] && ShiftPressed(keys)) {
 		switch (key) {
@@ -114,12 +114,12 @@ static char* KeyToSequence(SDL_Scancode key) {
 
 void HandleInputEvent(SDL_Event* e, Terminal* terminal) {
 	switch (e->type) {
-		case SDL_TEXTINPUT: {
+		case SDL_EVENT_TEXT_INPUT: {
 			write(terminal->pty.master, e->text.text, strlen(e->text.text));
 			break;
 		}
-		case SDL_KEYDOWN: {
-			char* sequence = KeyToSequence(e->key.keysym.scancode);
+		case SDL_EVENT_KEY_DOWN: {
+			char* sequence = KeyToSequence(e->key.scancode);
 
 			if (sequence == NULL) {
 				break;

@@ -18,5 +18,7 @@ bool  StringIsNumeric(char* str);
 char* DupString(char* str);
 bool  HexToColour(const char *colour, SDL_Color* ret);
 char* GetUserShell(void);
+void  Log(const char* format, ...);
+void  Error(const char* format, ...);
 
 #endif

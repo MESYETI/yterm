@@ -196,11 +196,11 @@ void TextScreen_Render(TextScreen* text, Video* video, bool showCursor) {
 
 	for (int y = 0; y < text->size.y; ++ y) {
 		for (int x = 0; x < text->size.x; ++ x) {
-			SDL_Rect rect;
-			rect.x = x * video->charWidth;
-			rect.y = y * video->charHeight;
-			rect.w = video->charWidth;
-			rect.h = video->charHeight;
+			SDL_FRect rect;
+			rect.x = (float) (x * video->charWidth);
+			rect.y = (float) (y * video->charHeight);
+			rect.w = (float) (video->charWidth);
+			rect.h = (float) (video->charHeight);
 
 			Cell cell = TextScreen_GetCharacter(text, x, y);
 

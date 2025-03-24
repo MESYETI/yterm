@@ -7,8 +7,7 @@
 typedef struct Video {
 	SDL_Window*   window;
 	SDL_Renderer* renderer;
-	TTF_Font*     font;
-	SDL_Texture*  characters[256];
+	SDL_Texture*  font;
 	int           charWidth;
 	int           charHeight;
 	Vec2          windowSize;

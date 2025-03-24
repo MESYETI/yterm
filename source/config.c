@@ -1,8 +1,10 @@
+#include "assets.h"
 #include "config.h"
 
 static const char* defaultConfig[] = {
 	"{",
-	"\t\"theme\": \"default\"",
+	"\t\"theme\": \"default\",",
+	"\t\"font\": \"basil_8x8\"",
 	"}",
 };
 
@@ -91,11 +93,8 @@ static const char *colourToString[] = {
 	[COLOUR_BLACK]          = "black",
 };
 
-void LoadConfig(ColourScheme* colourScheme) {
-	assert(colourScheme != NULL);
-
-	char path[2048];
-	assert(CONFIG_FOLDER[0] == '~');
+const char* GetConfigPath(void) {
+	static char path[2048];
 
 	const char* home = getenv("HOME");
 	if (home == NULL) {
@@ -103,8 +102,14 @@ void LoadConfig(ColourScheme* colourScheme) {
 	}
 
 	strcpy(path, home);
-    const char* config_path = CONFIG_FOLDER;
-	strcat(path, config_path + 1); 
+	const char* temp = CONFIG_FOLDER;
+	strcat(path, temp);
+
+	return path;
+}
+
+static void CreateConfig(void) {
+	const char* path = GetConfigPath();
 
 	if (access(path, F_OK) != 0) {
 		if (mkdir(path, 0777) != 0) {
@@ -138,9 +143,33 @@ void LoadConfig(ColourScheme* colourScheme) {
 		);
 	}
 
+	char fontsPath[2048];
+	strcpy(fontsPath, path);
+	strcat(fontsPath, FONTS_FOLDER);
+
+	if (access(fontsPath, F_OK) != 0) {
+		if (mkdir(fontsPath, 0777) != 0) {
+			FATAL("Could not create directory \"%s\"", fontsPath);
+		}
+	}
+
+	WriteAssets();
+}
+
+void LoadConfig(ColourScheme* colourScheme, Video* video) {
+	assert(colourScheme != NULL);
+
+	CreateConfig();
+	const char* path = GetConfigPath();
+
+	char configPath[2048];
+	strcpy(configPath, path);
+	strcat(configPath, CONFIG_FILE);
+
 	json_t*     json      = ParseJson(configPath);
 	const char* themeName = JsonGetString(json, "theme", configPath);
 
+	// THEME
 	char themePath[2048];
 	strcpy(themePath, path);
 	strcat(themePath, THEME_FOLDER);
@@ -166,6 +195,16 @@ void LoadConfig(ColourScheme* colourScheme) {
 	LOAD_COLOUR("bg", &colourScheme->bg);
 
 #undef LOAD_COLOUR
+
+	// FONT
+	char fontPath[2048];
+	strcpy(fontPath, path);
+	strcat(fontPath, FONTS_FOLDER);
+	strcat(fontPath, JsonGetString(json, "font", configPath));
+	strcat(fontPath, ".bmp");
+
+	Video_FreeFont(video);
+	Video_OpenFont(video, fontPath);
 
 	json_destroy(themeJson);
 	json_destroy(json);
