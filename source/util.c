@@ -42,6 +42,11 @@ char* DupString(char* str) {
 	return ret;
 }
 
+char* CharToString(char ch) {
+	char ret[] = {ch, 0};
+	return DupString(ret);
+}
+
 bool HexToColour(const char* colour, SDL_Color* ret) {
 	assert(ret != NULL);
 

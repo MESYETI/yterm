@@ -31,5 +31,4 @@ make
 ```
 
 ### Dependencies
-- SDL2
-- SDL2_ttf
+- SDL3

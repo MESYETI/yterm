@@ -24,6 +24,10 @@ static char* KeyToSequence(SDL_Scancode key) {
 			case SDL_SCANCODE_F10:       return DupString("\x1b[21;6~");
 			case SDL_SCANCODE_F11:       return DupString("\x1b[23;6~");
 			case SDL_SCANCODE_F12:       return DupString("\x1b[24;6~");
+			case SDL_SCANCODE_UP:        return DupString("\x1b[1;6A");
+			case SDL_SCANCODE_DOWN:      return DupString("\x1b[1;6B");
+			case SDL_SCANCODE_RIGHT:     return DupString("\x1b[1;6C");
+			case SDL_SCANCODE_LEFT:      return DupString("\x1b[1;6D");
 			default:                     return NULL;
 		}
 	}
@@ -43,32 +47,36 @@ static char* KeyToSequence(SDL_Scancode key) {
 			case SDL_SCANCODE_F10:       return DupString("\x1b[21;5~");
 			case SDL_SCANCODE_F11:       return DupString("\x1b[23;5~");
 			case SDL_SCANCODE_F12:       return DupString("\x1b[24;5~");
-			case SDL_SCANCODE_A:         return DupString("\x01");
-			case SDL_SCANCODE_B:         return DupString("\x02");
-			case SDL_SCANCODE_C:         return DupString("\x03"); // might be wrong
-			case SDL_SCANCODE_D:         return DupString("\x04");
-			case SDL_SCANCODE_E:         return DupString("\x05");
-			case SDL_SCANCODE_F:         return DupString("\x06");
-			case SDL_SCANCODE_G:         return DupString("\x07");
-			case SDL_SCANCODE_H:         return DupString("\x08");
-			case SDL_SCANCODE_I:         return DupString("\x09");
-			case SDL_SCANCODE_J:         return DupString("\x0A");
-			case SDL_SCANCODE_K:         return DupString("\x0B");
-			case SDL_SCANCODE_L:         return DupString("\x0C");
-			case SDL_SCANCODE_M:         return DupString("\x0A");
-			case SDL_SCANCODE_N:         return DupString("\x0E");
-			case SDL_SCANCODE_O:         return DupString("\x0F");
-			case SDL_SCANCODE_P:         return DupString("\x10");
-			case SDL_SCANCODE_Q:         return DupString("");
-			case SDL_SCANCODE_R:         return DupString("\x12");
-			case SDL_SCANCODE_S:         return DupString("");
-			case SDL_SCANCODE_T:         return DupString("");
-			case SDL_SCANCODE_U:         return DupString("");
-			case SDL_SCANCODE_V:         return DupString("");
-			case SDL_SCANCODE_W:         return DupString("");
-			case SDL_SCANCODE_X:         return DupString("");
-			case SDL_SCANCODE_Y:         return DupString("");
-			case SDL_SCANCODE_Z:         return DupString("");
+			case SDL_SCANCODE_A:         return CharToString('A' & 0x1F);
+			case SDL_SCANCODE_B:         return CharToString('B' & 0x1F);
+			case SDL_SCANCODE_C:         return CharToString('C' & 0x1F);
+			case SDL_SCANCODE_D:         return CharToString('D' & 0x1F);
+			case SDL_SCANCODE_E:         return CharToString('E' & 0x1F);
+			case SDL_SCANCODE_F:         return CharToString('F' & 0x1F);
+			case SDL_SCANCODE_G:         return CharToString('G' & 0x1F);
+			case SDL_SCANCODE_H:         return CharToString('H' & 0x1F);
+			case SDL_SCANCODE_I:         return CharToString('I' & 0x1F);
+			case SDL_SCANCODE_J:         return CharToString('J' & 0x1F);
+			case SDL_SCANCODE_K:         return CharToString('K' & 0x1F);
+			case SDL_SCANCODE_L:         return CharToString('L' & 0x1F);
+			case SDL_SCANCODE_M:         return CharToString('M' & 0x1F);
+			case SDL_SCANCODE_N:         return CharToString('N' & 0x1F);
+			case SDL_SCANCODE_O:         return CharToString('O' & 0x1F);
+			case SDL_SCANCODE_P:         return CharToString('P' & 0x1F);
+			case SDL_SCANCODE_Q:         return CharToString('Q' & 0x1F);
+			case SDL_SCANCODE_R:         return CharToString('R' & 0x1F);
+			case SDL_SCANCODE_S:         return CharToString('S' & 0x1F);
+			case SDL_SCANCODE_T:         return CharToString('T' & 0x1F);
+			case SDL_SCANCODE_U:         return CharToString('U' & 0x1F);
+			case SDL_SCANCODE_V:         return CharToString('V' & 0x1F);
+			case SDL_SCANCODE_W:         return CharToString('W' & 0x1F);
+			case SDL_SCANCODE_X:         return CharToString('X' & 0x1F);
+			case SDL_SCANCODE_Y:         return CharToString('Y' & 0x1F);
+			case SDL_SCANCODE_Z:         return CharToString('Z' & 0x1F);
+			case SDL_SCANCODE_UP:        return DupString("\x1b[1;5A");
+			case SDL_SCANCODE_DOWN:      return DupString("\x1b[1;5B");
+			case SDL_SCANCODE_RIGHT:     return DupString("\x1b[1;5C");
+			case SDL_SCANCODE_LEFT:      return DupString("\x1b[1;5D");
 			default:                     return NULL;
 		}
 	}
@@ -88,6 +96,10 @@ static char* KeyToSequence(SDL_Scancode key) {
 			case SDL_SCANCODE_F10:       return DupString("\x1b[21;2~");
 			case SDL_SCANCODE_F11:       return DupString("\x1b[23;2~");
 			case SDL_SCANCODE_F12:       return DupString("\x1b[24;2~");
+			case SDL_SCANCODE_UP:        return DupString("\x1b[1;2A");
+			case SDL_SCANCODE_DOWN:      return DupString("\x1b[1;2B");
+			case SDL_SCANCODE_RIGHT:     return DupString("\x1b[1;2C");
+			case SDL_SCANCODE_LEFT:      return DupString("\x1b[1;2D");
 			default:                     return NULL;
 		}
 	}
@@ -107,6 +119,10 @@ static char* KeyToSequence(SDL_Scancode key) {
 			case SDL_SCANCODE_F10:       return DupString("\x1b[21~");
 			case SDL_SCANCODE_F11:       return DupString("\x1b[23~");
 			case SDL_SCANCODE_F12:       return DupString("\x1b[24~");
+			case SDL_SCANCODE_UP:        return DupString("\x1b[A");
+			case SDL_SCANCODE_DOWN:      return DupString("\x1b[B");
+			case SDL_SCANCODE_RIGHT:     return DupString("\x1b[C");
+			case SDL_SCANCODE_LEFT:      return DupString("\x1b[D");
 			default:                     return NULL;
 		}
 	}

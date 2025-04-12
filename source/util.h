@@ -16,6 +16,7 @@ void  DumpSequence(char* seq);
 bool  StringStartsWith(char* str, char* with);
 bool  StringIsNumeric(char* str);
 char* DupString(char* str);
+char* CharToString(char ch);
 bool  HexToColour(const char *colour, SDL_Color* ret);
 char* GetUserShell(void);
 void  Log(const char* format, ...);

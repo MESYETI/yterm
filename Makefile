@@ -5,6 +5,12 @@ LIBS     = -lSDL3
 FLAGS    = -std=c99 -Wall -Wextra -pedantic -g -I./lib
 EMBEDDED = $(addsuffix .h,$(subst assets/,source/assets/,$(basename $(wildcard assets/*))))
 
+ifeq ($(MODE), release)
+	FLAGS += -Ofast -s
+else
+	FLAGS += -g -Og
+endif
+
 compile: $(EMBEDDED) ./bin $(OBJ) $(SRC) $(DEPS)
 	$(CC) $(OBJ) $(LIBS) -o yterm
 

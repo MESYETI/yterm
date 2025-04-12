@@ -90,7 +90,16 @@ void TextScreen_PutCharacter(TextScreen* text, char ch) {
 			break;
 		}
 		case '\t': {
+			int oldX = text->cursor.x;
+
 			text->cursor.x += 4 - text->cursor.x % 4;
+
+			for (int i = oldX; i <= text->cursor.x; ++ i) {
+				TextScreen_SetCharacter(
+					text, i, text->cursor.y,
+					NewCell(' ', text->attr.fg, text->attr.bg, text->attr.attr)
+				);
+			}
 			break;
 		}
 		case 0x07: { // bell
@@ -105,7 +114,8 @@ void TextScreen_PutCharacter(TextScreen* text, char ch) {
 			}
 			
 			TextScreen_SetCharacter(
-				text, text->cursor.x, text->cursor.y, CellByCharacter(' ')
+				text, text->cursor.x, text->cursor.y,
+				NewCell(' ', text->attr.fg, text->attr.bg, text->attr.attr)
 			);
 			break;
 		}
