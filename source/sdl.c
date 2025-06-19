@@ -26,6 +26,8 @@ Video Video_Init(void) {
 		FATAL("Failed to create renderer");
 	}
 
+	SDL_SetRenderVSync(ret.renderer, 1);
+
 	printf("Renderer: %s\n", SDL_GetRendererName(ret.renderer));
 
 	ret.font = NULL;
