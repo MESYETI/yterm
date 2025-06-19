@@ -1,0 +1,8 @@
+|:@build: $src to $obj|
+	:@shell: gcc $src -o $obj -c -std=c99 -Wall -Wextra -pedantic -g -I./lib
+|:@build: finalise|
+	:@shell: gcc bin/*.o -o yterm -lSDL3
+||
+	:: import build
+	:: compile source source/*.c to bin/*.o
+	:@shell: mkdir -p bin

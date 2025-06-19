@@ -212,6 +212,45 @@ void TextScreen_Render(TextScreen* text, Video* video, bool showCursor) {
 			rect.w = (float) (video->charWidth);
 			rect.h = (float) (video->charHeight);
 
+			Cell      cell = TextScreen_GetCharacter(text, x, y);
+			SDL_Color fg   = text->colours->fg;
+			SDL_Color bg   = text->colours->bg;
+
+			if (cell.attr.attr & ATTR_COLOUR_BG) {
+				bg = text->colours->colour16[cell.attr.bg];
+			}
+
+			if (showCursor && (x == text->cursor.x) && (y == text->cursor.y)) {
+				SDL_Color temp = fg;
+				fg             = bg;
+				bg             = temp;
+			}
+
+			if (cell.attr.attr & ATTR_REVERSE) {
+				SDL_Color temp = fg;
+				fg             = bg;
+				bg             = temp;
+			}
+
+			if (cell.attr.attr & ATTR_REVERSE) {
+				SDL_Color temp = fg;
+				fg             = bg;
+				bg             = temp;
+			}
+
+			SDL_SetRenderDrawColor(video->renderer, bg.r, bg.g, bg.b, bg.a);
+			SDL_RenderFillRect(video->renderer, &rect);
+		}
+	}
+
+	for (int y = 0; y < text->size.y; ++ y) {
+		for (int x = 0; x < text->size.x; ++ x) {
+			SDL_FRect rect;
+			rect.x = (float) (x * video->charWidth);
+			rect.y = (float) (y * video->charHeight);
+			rect.w = (float) (video->charWidth);
+			rect.h = (float) (video->charHeight);
+
 			Cell cell = TextScreen_GetCharacter(text, x, y);
 
 			SDL_Color fg = text->colours->fg;
@@ -235,9 +274,6 @@ void TextScreen_Render(TextScreen* text, Video* video, bool showCursor) {
 				fg             = bg;
 				bg             = temp;
 			}
-
-			SDL_SetRenderDrawColor(video->renderer, bg.r, bg.g, bg.b, bg.a);
-			SDL_RenderFillRect(video->renderer, &rect);
 
 			Video_DrawCharacter(video, rect.x, rect.y, cell.ch, fg);
 		}
